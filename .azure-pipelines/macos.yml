@@ -22,5 +22,9 @@ jobs:
         BINTRAY_AUTH: $(BINTRAY_AUTH)
         BINTRAY_REPO: $(BINTRAY_REPO)
     - script: |
+        set -ex
         ./envoy_pkg/build_context.py --download --tag $(git rev-parse HEAD)
         /usr/local/opt/envoy_pkg/package_envoy.py --test_package
+      env:
+        BINTRAY_AUTH: $(BINTRAY_AUTH)
+        BINTRAY_REPO: $(BINTRAY_REPO)
