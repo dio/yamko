@@ -10,4 +10,10 @@ jobs:
 
   steps:
     - script: make push
+      env:
+        BINTRAY_AUTH: $(BINTRAY_AUTH)
+        BINTRAY_REPO: $(BINTRAY_REPO)
     - script: make release
+      env:
+        BINTRAY_AUTH: $(BINTRAY_AUTH)
+        BINTRAY_REPO: $(BINTRAY_REPO)

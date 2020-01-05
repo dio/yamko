@@ -28,7 +28,7 @@ $(OUTPUT_DIR)/$(DISTRO)/build-context.tar: $(OUTPUT_DIR)/common-context.tar
 
 .PHONY: push
 push: $(OUTPUT_DIR)/$(DISTRO)/$(PACKAGE_BUILD_TAR)
-	@echo $(BINTRAY_AUTH)
+	@echo "AUTH: $(BINTRAY_AUTH)"
 	@$(ENVOY_PKG_DIR)/build_context.py --upload --tag $(SHA) --package_tar $(shell realpath $(OUTPUT_DIR))/$(DISTRO)/$(PACKAGE_BUILD_TAR)
 
 .PHONY: release
