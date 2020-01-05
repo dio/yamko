@@ -14,10 +14,11 @@
 
 ENVOY_PKG_DIR ?= ../envoy_pkg
 OUTPUT_DIR ?= ../build-image
+PACKAGE_BUILD_TAR ?= envoy-package-build.tar
 SHA = $(shell git rev-parse HEAD)
 DISTRO = mac
 
-$(OUTPUT_DIR)/$(DISTRO)/envoy-package-build.tar: $(OUTPUT_DIR)/$(DISTRO)/build-context.tar $(OUTPUT_DIR)/envoy
+$(OUTPUT_DIR)/$(DISTRO)/$(PACKAGE_BUILD_TAR): $(OUTPUT_DIR)/$(DISTRO)/build-context.tar $(OUTPUT_DIR)/envoy
 	@$(OUTPUT_DIR)/envoy/ci/mac_ci_setup.sh
 	@./build_deps_mac.sh $(OUTPUT_DIR)/$(DISTRO)/build-context.tar $@
 
@@ -26,8 +27,8 @@ $(OUTPUT_DIR)/$(DISTRO)/build-context.tar: $(OUTPUT_DIR)/common-context.tar
 	@cp $(OUTPUT_DIR)/common-context.tar $@
 
 .PHONY: push
-push: $(OUTPUT_DIR)/$(DISTRO)/envoy-package-build.tar
-	@$(ENVOY_PKG_DIR)/build_context.py --upload --tag $(SHA) --package_tar $(shell realpath $(OUTPUT_DIR))
+push: $(OUTPUT_DIR)/$(DISTRO)/$(PACKAGE_BUILD_TAR)
+	@$(ENVOY_PKG_DIR)/build_context.py --upload --tag $(SHA) --package_tar $(shell realpath $(OUTPUT_DIR))/$(PACKAGE_BUILD_TAR)
 
 .PHONY: release
 release:
