@@ -24,3 +24,4 @@ jobs:
       env:
         BINTRAY_AUTH: $(BINTRAY_AUTH)
         BINTRAY_REPO: $(BINTRAY_REPO)
+        ENVOY_DIST: darwin
