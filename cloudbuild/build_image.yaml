@@ -1,0 +1,46 @@
+# Copyright 2019 Tetrate
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+steps:
+- id: reset
+  name: gcr.io/cloud-builders/git
+  args: ['reset', '--hard', '$_GIT_SHA']
+
+- id: make
+  name: gcr.io/cloud-builders/docker
+  args: ['build', '-t', 'make', '-f', 'cloudbuild/Dockerfile.deps', '.']
+
+- id: common
+  name: make
+  args: ['common']
+
+- id: build-ubuntu-xenial
+  waitFor: ['common']
+  name: make
+  args: ['ubuntu-xenial']
+
+- id: rbe-linux-glibc
+  waitFor: ['common']
+  name: make
+  args: ['linux-glibc']
+
+images:
+  - gcr.io/getenvoy-package/build-ubuntu-xenial:$_GIT_SHA
+  - gcr.io/getenvoy-package/rbe-linux-glibc:$_GIT_SHA
+  - gcr.io/getenvoy-package/bazel-linux-glibc:$_GIT_SHA
+options:
+  workerPool: 'getenvoy-package/envoy-build'
+  env:
+  - 'TEST_TMPDIR=/tmp'
+timeout: 3600s

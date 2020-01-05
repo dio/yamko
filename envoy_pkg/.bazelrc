@@ -1,0 +1,92 @@
+# Copyright 2019 Tetrate
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+import %workspace%/envoy/.bazelrc
+
+# GetEnvoy options
+build --strip=never --copt=-ggdb3
+build --action_env=BAZEL_COMPILER=clang
+build --action_env=CC=clang
+build --action_env=CXX=clang++
+build --incompatible_strict_action_env
+build --test_output=errors
+build --workspace_status_command=bazel/get_workspace_status
+
+build:release --compilation_mode=opt
+build:release --strip=never
+build:release --copt=-ggdb3
+
+build:release-fips --config=release
+build:release-fips --define boringssl=fips
+
+test --test_env=ENVOY_IP_TEST_VERSIONS=v4only
+
+# GetEnvoy variants
+build:envoy --incompatible_bzl_disallow_load_after_statement=false
+build:istio-proxy --incompatible_depset_union=false
+build:istio-proxy --incompatible_bzl_disallow_load_after_statement=false
+build:istio-proxy --incompatible_disable_deprecated_attr_params=false
+build:istio-proxy --incompatible_string_join_requires_strings=false
+build:istio-proxy --incompatible_require_ctx_in_configure_features=false
+build:istio-proxy --incompatible_depset_is_not_iterable=false
+build:istio-proxy --host_force_python=PY2
+
+# GetEnvoy distributions
+build:alpine --define=tcmalloc=disabled --define=signal_trace=disabled
+build:alpine --linkopt -static --linkopt=-lstdc++ --linkopt=-lm --linkopt -lexecinfo --linkopt -Wl,--allow-multiple-definition
+build:alpine --linkopt -fuse-ld=gold
+
+build:ubuntu-xenial --action_env=PATH=/usr/lib/llvm-8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+build:ubuntu-xenial --linkopt=-fuse-ld=lld
+
+build:linux-glibc-toolchain --config=libc++
+build:linux-glibc-toolchain --host_javabase=@bazel_tools//tools/jdk:remote_jdk11
+build:linux-glibc-toolchain --javabase=@bazel_tools//tools/jdk:remote_jdk11
+build:linux-glibc-toolchain --host_platform=@envoy_pkg//bazel:rbe_linux_glibc_platform
+build:linux-glibc-toolchain --platforms=@envoy_pkg//bazel:rbe_linux_glibc_platform
+build:linux-glibc-toolchain --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+build:linux-glibc-toolchain --crosstool_top=@rbe_linux_glibc//cc:toolchain
+build:linux-glibc-toolchain --extra_toolchains=@rbe_linux_glibc//config:cc-toolchain
+build:linux-glibc-toolchain --action_env=CC=clang --action_env=CXX=clang++
+build:linux-glibc-toolchain --define force_libcpp=enabled
+
+build:remote --spawn_strategy=remote,sandboxed,local
+build:remote --strategy=Javac=remote,sandboxed,local
+build:remote --strategy=Closure=remote,sandboxed,local
+build:remote --strategy=Genrule=remote,sandboxed,local
+build:remote --remote_timeout=3600
+build:remote --auth_enabled=true
+build:remote --experimental_inmemory_jdeps_files
+build:remote --experimental_inmemory_dotd_files
+
+build:linux-glibc --config=linux-glibc-toolchain
+build:linux-glibc --config=remote
+build:linux-glibc --remote_cache=grpcs://remotebuildexecution.googleapis.com
+build:linux-glibc --remote_executor=grpcs://remotebuildexecution.googleapis.com
+build:linux-glibc --remote_instance_name=projects/getenvoy-package/instances/default_instance
+build:linux-glibc --jobs=80
+build:linux-glibc --experimental_remote_download_outputs=toplevel
+
+build:linux-glibc-docker --experimental_docker_image=gcr.io/getenvoy-package/rbe-linux-glibc@sha256:17a9702b9c29f6e244c415b67fc43c43ec432a9e602b412e5efc9b9e25f2bff7
+build:linux-glibc-docker --config=linux-glibc-toolchain
+build:linux-glibc-docker --spawn_strategy=docker
+build:linux-glibc-docker --strategy=Javac=docker
+build:linux-glibc-docker --strategy=Closure=docker
+build:linux-glibc-docker --strategy=Genrule=docker
+build:linux-glibc-docker --define=EXECUTOR=remote
+build:linux-glibc-docker --experimental_docker_verbose
+build:linux-glibc-docker --experimental_enable_docker_sandbox
+
+# This is no-op but if this doesn't exist bazel will error with non-exist config
+build:darwin --announce_rc
