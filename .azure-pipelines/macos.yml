@@ -9,4 +9,5 @@ jobs:
     vmImage: 'macos-latest'
 
   steps:
+    - script: make -C mac push
     - script: make -C mac release
