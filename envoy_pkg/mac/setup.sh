@@ -18,5 +18,5 @@ set -ex
 
 brew update
 brew upgrade
-brew tap bazelbuild/tap
+brew tap bazelbuild/tap/bazelisk
 brew install bazelbuild/tap/bazelisk cmake coreutils go libtool ninja wget
