@@ -29,10 +29,7 @@ from bintray_uploader import uploadToBintray
 
 def upload(args):
     package_name = 'envoy-package-build-{}.tar'.format(args.tag)
-    shutil.copy(
-        os.path.expanduser(
-            '~/envoy-package/build-image/mac/envoy-package-build.tar'),
-        package_name)
+    shutil.copy(os.path.expanduser(args.package_tar), package_name)
     args.version = args.tag
     args.filename = package_name
     uploadToBintray(args, override=True)
@@ -79,6 +76,10 @@ def main():
                                                'envoy-package-build:darwin'))
     parser.add_argument('--tag',
                         default=os.environ.get("BINTRAY_TAG", 'latest'))
+
+    parser.add_argument('--package_tar',
+                        default=os.environ.get("PACKAGE_TAR",
+                                               "~/envoy-package/build-image/mac/envoy-package-build.tar"))
 
     args = parser.parse_args()
     os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))

@@ -27,8 +27,7 @@ $(OUTPUT_DIR)/$(DISTRO)/build-context.tar: $(OUTPUT_DIR)/common-context.tar
 
 .PHONY: push
 push: $(OUTPUT_DIR)/$(DISTRO)/envoy-package-build.tar
-	@echo $(shell realpath $(OUTPUT_DIR))
-	@$(ENVOY_PKG_DIR)/build_context.py --upload --tag $(SHA)
+	@$(ENVOY_PKG_DIR)/build_context.py --upload --tag $(SHA) --package_tar $(shell realpath $(OUTPUT_DIR))
 
 .PHONY: release
 release:
