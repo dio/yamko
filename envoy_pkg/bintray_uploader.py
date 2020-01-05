@@ -23,6 +23,7 @@ import urllib.parse
 
 
 def uploadToBintray(args, override=False):
+    print(args.bintray_auth)
     headers = {
         'Authorization': 'Basic {}'.format(args.bintray_auth),
         'Content-Length': os.stat(args.filename).st_size,
