@@ -37,6 +37,7 @@ def upload(args):
 
 def download(args):
     headers = {'Authorization': 'Basic {}'.format(args.bintray_auth)}
+    print(args.bintray_auth)
     build_context_url = 'https://{}.bintray.com/{}/envoy-package-build-{}.tar'.format(
         args.bintray_org, args.bintray_repo, args.tag)
     request = urllib.request.Request(build_context_url, headers=headers)
