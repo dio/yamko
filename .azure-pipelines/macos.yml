@@ -17,10 +17,6 @@ jobs:
       env:
         BINTRAY_AUTH: $(BINTRAY_AUTH)
         BINTRAY_REPO: $(BINTRAY_REPO)
-    - script: make release
-      env:
-        BINTRAY_AUTH: $(BINTRAY_AUTH)
-        BINTRAY_REPO: $(BINTRAY_REPO)
     - script: |
         set -ex
         ./envoy_pkg/build_context.py --download --tag $(git rev-parse HEAD)
